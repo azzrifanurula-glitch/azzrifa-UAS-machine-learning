@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Prediksi Harga Mobil Sport</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 350px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        input, button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Prediksi Harga Mobil Sport</h2>
+
+    <input type="number" id="year" placeholder="Tahun" />
+    <input type="number" id="engine_hp" placeholder="Engine HP" />
+    <input type="number" id="engine_cyl" placeholder="Engine Cylinders" />
+    <input type="number" id="highway_mpg" placeholder="Highway MPG" />
+    <input type="number" id="city_mpg" placeholder="City MPG" />
+    <input type="number" id="popularity" placeholder="Popularity" />
+
+    <button onclick="predictPrice()">Prediksi</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+async function predictPrice() {
+    const year = document.getElementById("year").value;
+    const engineHP = document.getElementById("engine_hp").value;
+    const engineCyl = document.getElementById("engine_cyl").value;
+    const highwayMPG = document.getElementById("highway_mpg").value;
+    const cityMPG = document.getElementById("city_mpg").value;
+    const popularity = document.getElementById("popularity").value;
+
+    const data = {
+        Year: parseFloat(year),
+        Engine_HP: parseFloat(engineHP),
+        Engine_Cylinders: parseFloat(engineCyl),
+        highway_MPG: parseFloat(highwayMPG),
+        city_mpg: parseFloat(cityMPG),
+        Popularity: parseFloat(popularity)
+    };
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            document.getElementById("result").innerHTML =
+                "💰 Prediksi Harga: <b>$" + result.predicted_price.toLocaleString() + "</b>";
+        } else {
+            document.getElementById("result").innerText = "Gagal memproses data";
+        }
+
+    } catch (error) {
+        document.getElementById("result").innerText = "Error koneksi ke API";
+        console.error(error);
+    }
+}
+</script>
+
+</body>
+</html>
